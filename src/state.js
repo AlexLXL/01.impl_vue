@@ -18,7 +18,7 @@ function initData(vm) {
         proxy(vm, key, "_data");
     }
     
-    console.log(data);
+    console.log("添加监控后data:", data);
     // data.arr.push(3);
     // console.log(vm.arr);
     // vm.arr[1].push(3);

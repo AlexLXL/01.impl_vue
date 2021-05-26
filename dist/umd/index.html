@@ -6,12 +6,15 @@
     <script src="vue.js"></script>
 </head>
 <body>
-    <div id="app" style="font-size: 18px; color: #ccc"> aa {{name}} bb <span>{{message.phone}}</span></div>
+    <div id="app" style="font-size: 18px; color: #ccc"> aa {{name}} bb <span> cc {{info.phone}} dd </span></div>
     <script type="text/javascript">
         new Vue({
             el: "#app",
             data: {
                 name: "lang",
+                info: {
+                    phone: 13411135426
+                },
                 arr: [{a: 1}, [1,2], "ccc"]
             }
         })
