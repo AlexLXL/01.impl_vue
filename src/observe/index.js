@@ -23,7 +23,7 @@ function defineReactive(obj, key, value) {
 
     Object.defineProperty(obj, key, {
         get() {
-            return value
+            return value;
         },
         set(newValue) {
             if (newValue === oldValue) return;
