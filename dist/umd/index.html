@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>write_vue2</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+    <div id="app" style="font-size: 18px; color: #ccc"> aa {{name}} bb <span>{{message.phone}}</span></div>
+    <script type="text/javascript">
+        new Vue({
+            el: "#app",
+            data: {
+                name: "lang",
+                arr: [{a: 1}, [1,2], "ccc"]
+            }
+        })
+    </script>
+</body>
+</html>
