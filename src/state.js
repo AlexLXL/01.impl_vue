@@ -19,8 +19,13 @@ function initData(vm) {
     }
     
     console.log(data);
-    data.arr.push(3);
-    console.log(vm.arr);
+    // data.arr.push(3);
+    // console.log(vm.arr);
+    // vm.arr[1].push(3);
+    // vm.name = {a: 2};
+    // vm.name.a = 20;
+    // vm.arr.push({a: 100});
+    // vm.arr[3].a = 200;
 }
 
 function proxy(vm, key, source) {

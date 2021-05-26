@@ -18,29 +18,57 @@
     let arrayMethods = Object.create(oldArrayPrototype);
     let methods = ["push", "shift", "pop", "unshift", "reverse", "sort", "splice"];
     methods.forEach(method => {
-      arrayMethods[method] = function () {
-        console.log("数组方法进行了重写操作");
+      arrayMethods[method] = function (...args) {
+        oldArrayPrototype[method].call(this, ...args); // 监控新增的值
+
+        let inserted = null;
+        let ob = this.__ob__;
+
+        switch (method) {
+          case "splice":
+            inserted = args.slice(2);
+
+          case "push":
+          case "unshift":
+            inserted = args;
+            break;
+        }
+
+        if (inserted) ob.observeArray(inserted);
       };
     });
 
     function observe(value) {
+      if (value.__ob__) return;
       if (!isObject(value)) return;
       return new Observer(value);
     }
 
     class Observer {
       constructor(value) {
+        Object.defineProperty(value, "__ob__", {
+          value: this,
+          enumerable: false
+        });
+
         if (isArray(value)) {
           value.__proto__ = arrayMethods;
+          this.observeArray(value);
         } else {
           this.walk(value);
         }
       }
 
       walk(data) {
+        // 监控对象
         Object.keys(data).forEach(key => {
           defineReactive(data, key, data[key]);
         });
+      }
+
+      observeArray(data) {
+        // 监控数组
+        data.forEach(item => observe(item)); // 数组内的引用类型添加监控，[[], {}]
       }
 
     }
@@ -54,7 +82,9 @@
         },
 
         set(newValue) {
-          if (newValue === oldValue) return;
+          if (newValue === value) return;
+          observe(newValue); // 新值加监控
+
           value = newValue;
         }
 
@@ -78,9 +108,13 @@
         proxy(vm, key, "_data");
       }
 
-      console.log(data);
-      data.arr.push(3);
-      console.log(vm.arr);
+      console.log(data); // data.arr.push(3);
+      // console.log(vm.arr);
+      // vm.arr[1].push(3);
+      // vm.name = {a: 2};
+      // vm.name.a = 20;
+      // vm.arr.push({a: 100});
+      // vm.arr[3].a = 200;
     }
 
     function proxy(vm, key, source) {
