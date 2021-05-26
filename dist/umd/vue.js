@@ -10,6 +10,18 @@
     function isObject(val) {
       return typeof val === "object" && val !== null;
     }
+    function isArray(val) {
+      return Array.isArray(val);
+    }
+
+    let oldArrayPrototype = Array.prototype;
+    let arrayMethods = Object.create(oldArrayPrototype);
+    let methods = ["push", "shift", "pop", "unshift", "reverse", "sort", "splice"];
+    methods.forEach(method => {
+      arrayMethods[method] = function () {
+        console.log("数组方法进行了重写操作");
+      };
+    });
 
     function observe(value) {
       if (!isObject(value)) return;
@@ -18,7 +30,11 @@
 
     class Observer {
       constructor(value) {
-        this.walk(value);
+        if (isArray(value)) {
+          value.__proto__ = arrayMethods;
+        } else {
+          this.walk(value);
+        }
       }
 
       walk(data) {
@@ -58,6 +74,7 @@
       data = isFunction(data) ? data.call(vm) : data;
       observe(data);
       console.log(data);
+      data.arr.push(3);
     }
 
     function initMixin(Vue) {

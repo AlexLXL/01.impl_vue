@@ -15,4 +15,5 @@ function initData(vm) {
     observe(data);
     
     console.log(data);
+    data.arr.push(3);
 }
