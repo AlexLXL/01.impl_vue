@@ -12,6 +12,8 @@ export function compilerToFunction(template) {
 
     let render = new Function(`with(this) {return ${code}}`);
     console.log("render:", render.toString());
+
+    return render;
 }
 
 /*

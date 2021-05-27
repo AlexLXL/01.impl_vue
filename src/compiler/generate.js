@@ -15,7 +15,7 @@ export function generate(ast) {
                 ast.attrs.length ? genProps(ast.attrs) : "undefined"
             }
             ${
-                children ? `,[${children}]` : ""
+                children ? `,${children}` : ""
             }
         )`;
     return code
