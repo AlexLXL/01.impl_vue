@@ -38,6 +38,28 @@
       };
     });
 
+    let id$1 = 0;
+    class Dep {
+      constructor() {
+        this.subs = [];
+        this.id = id$1++;
+      }
+
+      depend() {
+        Dep.target.addDep(this); // watcher添加dep
+      }
+
+      addSub(watcher) {
+        this.subs.push(watcher);
+      }
+
+      notify() {
+        this.subs.forEach(watcher => watcher.update());
+      }
+
+    }
+    Dep.target = null;
+
     function observe(value) {
       if (value.__ob__) return;
       if (!isObject(value)) return;
@@ -76,8 +98,10 @@
     function defineReactive(obj, key, value) {
       observe(value); // 递归监控value
 
+      let dep = new Dep();
       Object.defineProperty(obj, key, {
         get() {
+          dep.depend();
           return value;
         },
 
@@ -86,6 +110,7 @@
           observe(newValue); // 新值加监控
 
           value = newValue;
+          dep.notify();
         }
 
       });
@@ -509,14 +534,62 @@
       }
     }
 
+    let id = 0;
+    class Watcher {
+      constructor(vm, fn, cb, options) {
+        this.vm = vm;
+        this.fm = fn;
+        this.cb = cb;
+        this.options = options; // 是否渲染watcher
+
+        this.id = id++;
+        this.depIds = new Set();
+        this.deps = [];
+        this.getter = fn;
+        this.get();
+      }
+
+      get() {
+        // 初始化
+        Dep.target = this; // window.target = watcher
+
+        this.getter();
+        Dep.target = null;
+      }
+
+      update() {
+        // 更新
+        this.get();
+      }
+
+      addDep(dep) {
+        let did = dep.id;
+
+        if (!this.depIds.has(did)) {
+          // 这里实现dep.ids的去重和watcher.deps去重
+          this.depIds.add(did);
+          this.deps.push(dep); // 保存id并让watcher记住dep
+
+          dep.addSub(this);
+        }
+      }
+
+    }
+
     function mountComponent(vm) {
-      let vnode = vm._render(); // render -> vnode
+      // let vnode = vm._render();
+      // console.log("vnode:", vnode);
+      // vm._update(vnode);
+      // 组件更新函数
+      let updateComponent = () => {
+        vm._update(vm._render()); // render -> vnode -> real DOM
 
+      };
 
-      console.log("vnode:", vnode);
-
-      vm._update(vnode); // vnode -> real DOM
-
+      new Watcher(vm, updateComponent, () => {
+        // render -> getter -> watcher
+        console.log("更新钩子 update");
+      }, true);
     }
     function lifCycleMixin(Vue) {
       Vue.prototype._update = function (vnode) {

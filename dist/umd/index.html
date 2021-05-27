@@ -8,7 +8,7 @@
 <body>
     <div id="app" style="font-size: 18px; color: #ccc"> aa {{name}} bb <span> cc {{info.phone}} dd </span></div>
     <script type="text/javascript">
-        new Vue({
+        var vm = new Vue({
             el: "#app",
             data: {
                 name: "lang",
@@ -17,7 +17,10 @@
                 },
                 arr: [{a: 1}, [1,2], "ccc"]
             }
-        })
+        });
+        setTimeout(() => {
+            vm.name = "alex";
+        }, 1000);
     </script>
 </body>
 </html>

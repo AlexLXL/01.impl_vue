@@ -1,5 +1,6 @@
 import {isArray, isObject} from "../utils";
 import {arrayMethods} from "./array";
+import {Dep} from "./dep";
 
 export function observe(value) {
     if (value.__ob__) return;
@@ -38,15 +39,17 @@ class Observer {
 
 function defineReactive(obj, key, value) {
     observe(value); // 递归监控value
-
+    let dep = new Dep();
     Object.defineProperty(obj, key, {
         get() {
+            dep.depend();
             return value;
         },
         set(newValue) {
             if (newValue === value) return;
             observe(newValue); // 新值加监控
             value = newValue;
+            dep.notify();
         }
     })
 }
