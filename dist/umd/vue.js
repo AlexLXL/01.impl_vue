@@ -13,6 +13,22 @@
     function isArray(val) {
       return Array.isArray(val);
     }
+    let callbacks = [];
+    let waiting = false;
+    function nextTick(fn) {
+      callbacks.push(fn);
+
+      if (!waiting) {
+        Promise.resolve().then(flushCallbacks);
+        waiting = true;
+      }
+    }
+
+    function flushCallbacks() {
+      callbacks.forEach(fn => fn());
+      callbacks = [];
+      waiting = false;
+    }
 
     let oldArrayPrototype = Array.prototype;
     let arrayMethods = Object.create(oldArrayPrototype);
@@ -534,6 +550,31 @@
       }
     }
 
+    let has = {};
+    let queue = [];
+    let pending = false;
+    function queueWatcher(watcher) {
+      let id = watcher.id;
+
+      if (has[id] == null) {
+        has[id] = true;
+        queue.push(watcher);
+      }
+
+      if (!pending) {
+        nextTick(flushSchedulerQueue); // 修改值的也是放到微任务队列里
+
+        pending = true;
+      }
+    }
+
+    function flushSchedulerQueue() {
+      queue.forEach(watcher => watcher.run());
+      queue = [];
+      has = {};
+      pending = false;
+    }
+
     let id = 0;
     class Watcher {
       constructor(vm, fn, cb, options) {
@@ -557,9 +598,16 @@
         Dep.target = null;
       }
 
+      run() {
+        // 真正更新
+        // console.log("执行run次数");
+        this.get();
+      }
+
       update() {
         // 更新
-        this.get();
+        // this.get();
+        queueWatcher(this); // 缓存更新，调度watcher
       }
 
       addDep(dep) {
@@ -628,6 +676,8 @@
 
         mountComponent(vm);
       };
+
+      Vue.prototype.$nextTick = nextTick;
     }
     /*
     示例:render函数

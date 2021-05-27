@@ -1,4 +1,5 @@
 import {Dep} from "./dep";
+import {queueWatcher} from "./schedule";
 
 let id = 0;
 
@@ -21,8 +22,13 @@ export class Watcher {
         this.getter();
         Dep.target = null;
     }
-    update() {  // 更新
+    run() {  // 真正更新
+        // console.log("执行run次数");
         this.get();
+    }
+    update() { // 更新
+        // this.get();
+        queueWatcher(this); // 缓存更新，调度watcher
     }
     addDep(dep) {
         let did = dep.id;
