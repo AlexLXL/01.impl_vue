@@ -23,7 +23,7 @@ export class Watcher {
         Dep.target = null;
     }
     run() {  // 真正更新
-        // console.log("执行run次数");
+        // console.log("run执行次数");
         this.get();
     }
     update() { // 更新

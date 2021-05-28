@@ -20,5 +20,6 @@ methods.forEach((method) => {
                 break;
         }
         if (inserted) ob.observeArray(inserted);
+        ob.dep.notify(); // 响应式原理之收集依赖之更新流程
     }
 })

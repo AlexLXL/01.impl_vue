@@ -6,7 +6,7 @@
     <script src="vue.js"></script>
 </head>
 <body>
-    <div id="app" style="font-size: 18px; color: #ccc"> aa {{name}} bb <span> cc {{info.phone}} dd </span></div>
+    <div id="app" style="font-size: 18px; color: #ccc"> aa {{name}} bb<span> cc {{info.phone}} dd </span><span>{{arr}}</span></div>
     <script type="text/javascript">
         var vm = new Vue({
             el: "#app",
@@ -18,12 +18,10 @@
                 arr: [{a: 1}, [1,2], "ccc"]
             }
         });
-        vm.name = "alex1";
-        vm.name = "alex2";
-        vm.name = "alex3";
+
         setTimeout(() => {
-            vm.name = "alex5";
-        }, 1000);
+            vm.arr.push(4);
+        }, 1500);
     </script>
 </body>
 </html>
