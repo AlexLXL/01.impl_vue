@@ -8,6 +8,19 @@
 <body>
     <div id="app" style="font-size: 18px; color: #ccc"> aa {{name}} bb<span> cc {{info.phone}} dd </span><span>{{arr}}</span></div>
     <script type="text/javascript">
+
+        Vue.mixin({
+            beforeCreate() {
+                console.log("全局beforeCreate1");
+            }
+        });
+
+        Vue.mixin({
+            beforeCreate() {
+                console.log("全局beforeCreate2");
+            }
+        });
+
         var vm = new Vue({
             el: "#app",
             data: {
@@ -16,12 +29,18 @@
                     phone: 13411135426
                 },
                 arr: [{a: 1}, [1,2], "ccc"]
-            }
+            },
+            beforeCreate: [
+                function () {
+                    console.log("组件beforeCreate1");
+                },
+                function () {
+                    console.log("组件beforeCreate2");
+                }
+            ]
         });
 
-        setTimeout(() => {
-            vm.arr.push(4);
-        }, 1500);
+        console.log(vm.$options)
     </script>
 </body>
 </html>

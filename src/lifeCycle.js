@@ -11,9 +11,12 @@ export function mountComponent(vm) {
         vm._update(vm._render()); // render -> vnode -> real DOM
     }
 
+    callHook(vm, "beforeCreate");
     new Watcher(vm, updateComponent, () => { // render -> getter -> watcher
-        console.log("更新钩子 update")
+        callHook(vm, "created");
     }, true);
+
+    callHook(vm, "mounted");
 }
 
 export function lifCycleMixin(Vue) {
@@ -21,4 +24,11 @@ export function lifCycleMixin(Vue) {
         const vm = this;
         vm.$el = patch(vm.$el, vnode);
     }
+}
+
+export function callHook(vm, hook) {
+    let handlers = vm.$options[hook];
+    handlers && handlers.forEach(item => {
+        item.call(this); // 声明周期的this永远指向实例
+    })
 }
